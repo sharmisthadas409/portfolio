@@ -297,6 +297,17 @@ const GlobalStyles = () => (
         .contact-icon { width: 60px; height: 60px; background: var(--primary-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; margin: 0 auto 1rem; }
         .contact-label { font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem; }
         .contact-value { color: var(--text-secondary); font-size: 0.95rem; }
+        
+        /* Footer */
+        .footer {
+            padding: 2rem 0;
+            text-align: center;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            border-top: 1px solid var(--glass-border);
+            margin-top: 2rem;
+        }
 
         /* Animations */
         @keyframes slideInLeft { from { opacity: 0; transform: translateX(-50px); } to { opacity: 1; transform: translateX(0); } }
@@ -306,20 +317,24 @@ const GlobalStyles = () => (
         .fade-in.visible { opacity: 1; transform: translateY(0); }
 
         /* Mobile Menu */
-        .mobile-menu-btn { display: none; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 0.75rem; cursor: pointer; backdrop-filter: blur(10px); }
+        .mobile-menu-btn { display: none; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; padding: 0.75rem; cursor: pointer; backdrop-filter: blur(10px); z-index: 1001;}
         .mobile-menu-btn i { color: var(--text-primary); font-size: 1.2rem; }
+
+        @media (max-width: 992px) {
+            .about-grid { grid-template-columns: 1fr; }
+            .hero-content { grid-template-columns: 1fr; text-align: center; }
+            .hero-cta, .social-proof { justify-content: center; }
+        }
 
         @media (max-width: 768px) {
             .container { padding: 0 1rem; }
+            .section { padding: 4rem 0; }
             .hero { padding-top: 6rem; }
             .mobile-menu-btn { display: block; }
-            .nav-links { position: fixed; top: 0; right: -100%; width: 80%; height: 100vh; background: var(--card-bg); backdrop-filter: blur(20px); border-left: 1px solid var(--glass-border); flex-direction: column; justify-content: center; padding: 2rem; gap: 2rem; transition: var(--transition); }
+            .nav-links { position: fixed; top: 0; right: -100%; width: 80%; max-width: 300px; height: 100vh; background: var(--card-bg); backdrop-filter: blur(20px); border-left: 1px solid var(--glass-border); flex-direction: column; justify-content: center; padding: 2rem; gap: 2rem; transition: var(--transition); }
             .nav-links.active { right: 0; }
-            .hero-content { grid-template-columns: 1fr; gap: 2rem; text-align: center; }
             .hero-text h1 { font-size: clamp(2.5rem, 10vw, 3.5rem); }
-            .about-grid { grid-template-columns: 1fr; gap: 2rem; }
             .skills-grid, .projects-grid { grid-template-columns: 1fr; }
-            .hero-cta, .social-proof { justify-content: center; }
         }
 
         /* Loading Animation */
@@ -332,27 +347,32 @@ const GlobalStyles = () => (
 
 // --- Custom Hooks ---
 const useIntersectionObserver = (options) => {
-    const [entry, setEntry] = useState(null);
-    const [node, setNode] = useState(null);
     const observer = useRef(null);
 
-    useEffect(() => {
+    const attachRef = (node) => {
         if (observer.current) observer.current.disconnect();
 
         observer.current = new window.IntersectionObserver(([entry]) => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('visible');
+                
+                // Specifically for skill bars
+                const skillBars = entry.target.querySelectorAll('.skill-progress');
+                if (skillBars.length > 0) {
+                    skillBars.forEach(bar => {
+                        bar.style.width = bar.getAttribute('data-width') + '%';
+                        bar.style.transition = 'width 1s ease-in-out';
+                    });
+                }
+                
                 observer.current.unobserve(entry.target);
             }
         }, options);
 
-        const { current: currentObserver } = observer;
-        if (node) currentObserver.observe(node);
+        if (node) observer.current.observe(node);
+    };
 
-        return () => currentObserver.disconnect();
-    }, [node, options]);
-
-    return [setNode];
+    return [attachRef];
 };
 
 
@@ -430,9 +450,10 @@ const Hero = () => {
 
     useEffect(() => {
         let i = 0;
+        setHeroTitle(''); 
         const typingInterval = setInterval(() => {
-            if (i < fullTitle.length) {
-                setHeroTitle(prev => prev + fullTitle.charAt(i));
+            if (i <= fullTitle.length) {
+                setHeroTitle(fullTitle.substring(0, i));
                 i++;
             } else {
                 clearInterval(typingInterval);
@@ -491,9 +512,69 @@ const Hero = () => {
 };
 
 const AnimatedSectionContent = ({ children }) => {
-    const [setRef] = useIntersectionObserver({ threshold: 0.1 });
-    return <div ref={setRef} className="fade-in">{children}</div>
+    const [attachRef] = useIntersectionObserver({ threshold: 0.1 });
+    return <div ref={attachRef} className="fade-in">{children}</div>
 }
+
+
+const Skills = () => {
+    const skillsData = [
+        {
+            icon: "fa-database", title: "Database Systems",
+            skills: [{ name: "PostgreSQL", level: 95 }, { name: "MySQL", level: 85 }, { name: "Database Design", level: 90 }, { name: "Query Optimization", level: 88 }]
+        },
+        {
+            icon: "fa-chart-bar", title: "Business Intelligence",
+            skills: [{ name: "Power BI", level: 93 }, { name: "DAX", level: 82 }, { name: "Data Modeling", level: 85 }, { name: "Dashboard Development", level: 90 }]
+        },
+        {
+            icon: "fa-code", title: "Programming & Analytics",
+            skills: [{ name: "Python", level: 78 }, { name: "Advanced SQL", level: 95 }, { name: "Statistical Analysis", level: 85 }, { name: "ETL/ELT", level: 88 }]
+        },
+        {
+            icon: "fa-tools", title: "Professional Tools",
+            skills: [{ name: "Data Visualization", level: 90 }, { name: "Report Automation", level: 85 }, { name: "Data Warehousing", level: 82 }, { name: "Performance Tuning", level: 88 }]
+        },
+    ];
+
+    const [attachRef] = useIntersectionObserver({ threshold: 0.2 });
+
+    return (
+        <section id="skills" className="section skills">
+            <div className="container" ref={attachRef}>
+                <AnimatedSectionContent>
+                    <div className="section-header">
+                        <div className="section-eyebrow">Technical Expertise</div>
+                        <h2 className="section-title">Skills & Technologies</h2>
+                        <p className="section-subtitle">Comprehensive toolkit for modern data challenges</p>
+                    </div>
+                    <div className="skills-grid">
+                        {skillsData.map(category => (
+                            <div key={category.title} className="skill-category">
+                                <div className="skill-header">
+                                    <div className="skill-icon"><i className={`fas ${category.icon}`}></i></div>
+                                    <div className="skill-title">{category.title}</div>
+                                </div>
+                                <ul className="skill-list">
+                                    {category.skills.map(skill => (
+                                        <li key={skill.name} className="skill-item">
+                                            <span className="skill-name">{skill.name}</span>
+                                            <div className="skill-level">
+                                                <div className="skill-bar">
+                                                    <div className="skill-progress" data-width={skill.level}></div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
+                </AnimatedSectionContent>
+            </div>
+        </section>
+    );
+};
 
 const About = () => (
     <section id="about" className="section about">
@@ -526,75 +607,6 @@ const About = () => (
     </section>
 );
 
-const SkillBar = ({ width }) => {
-    const [ref, entry] = useIntersectionObserver({ threshold: 0.5 });
-    const [progress, setProgress] = useState(0);
-
-    useEffect(() => {
-        if (entry?.isIntersecting) {
-            setProgress(width);
-        }
-    }, [entry, width]);
-
-    return (
-        <div ref={ref} className="skill-bar">
-            <div className="skill-progress" style={{ width: `${progress}%`, transition: 'width 1s ease-in-out' }}></div>
-        </div>
-    );
-};
-
-const Skills = () => {
-    const skillsData = [
-        {
-            icon: "fa-database", title: "Database Systems",
-            skills: [{ name: "PostgreSQL", level: 95 }, { name: "MySQL", level: 85 }, { name: "Database Design", level: 90 }, { name: "Query Optimization", level: 88 }]
-        },
-        {
-            icon: "fa-chart-bar", title: "Business Intelligence",
-            skills: [{ name: "Power BI", level: 93 }, { name: "DAX", level: 82 }, { name: "Data Modeling", level: 85 }, { name: "Dashboard Development", level: 90 }]
-        },
-        {
-            icon: "fa-code", title: "Programming & Analytics",
-            skills: [{ name: "Python", level: 78 }, { name: "Advanced SQL", level: 95 }, { name: "Statistical Analysis", level: 85 }, { name: "ETL/ELT", level: 88 }]
-        },
-        {
-            icon: "fa-tools", title: "Professional Tools",
-            skills: [{ name: "Data Visualization", level: 90 }, { name: "Report Automation", level: 85 }, { name: "Data Warehousing", level: 82 }, { name: "Performance Tuning", level: 88 }]
-        },
-    ];
-
-    return (
-        <section id="skills" className="section skills">
-            <div className="container">
-                <AnimatedSectionContent>
-                    <div className="section-header">
-                        <div className="section-eyebrow">Technical Expertise</div>
-                        <h2 className="section-title">Skills & Technologies</h2>
-                        <p className="section-subtitle">Comprehensive toolkit for modern data challenges</p>
-                    </div>
-                    <div className="skills-grid">
-                        {skillsData.map(category => (
-                            <div key={category.title} className="skill-category">
-                                <div className="skill-header">
-                                    <div className="skill-icon"><i className={`fas ${category.icon}`}></i></div>
-                                    <div className="skill-title">{category.title}</div>
-                                </div>
-                                <ul className="skill-list">
-                                    {category.skills.map(skill => (
-                                        <li key={skill.name} className="skill-item">
-                                            <span className="skill-name">{skill.name}</span>
-                                            <div className="skill-level"><SkillBar width={skill.level} /></div>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        ))}
-                    </div>
-                </AnimatedSectionContent>
-            </div>
-        </section>
-    );
-};
 
 const Projects = () => {
     const projectsData = [
@@ -622,7 +634,7 @@ const Projects = () => {
         },
         {
             title: "Student Attendance Management System",
-            tech: "PostgreSQL • Database Design",
+            tech: "PostgreSQL • Database Design • Application",
             description: "Robust PostgreSQL database application for academic attendance tracking with comprehensive data management and real-time reporting capabilities.",
             highlights: [
                 "Created normalized PostgreSQL schema with relational integrity",
@@ -698,6 +710,12 @@ const Contact = () => (
     </section>
 );
 
+const Footer = () => (
+    <footer className="footer">
+        <p>Designed & Developed by Sharmistha</p>
+    </footer>
+);
+
 export default function App() {
   return (
     <>
@@ -711,6 +729,7 @@ export default function App() {
         <Projects />
         <Contact />
       </main>
+      <Footer />
     </>
   );
 }
