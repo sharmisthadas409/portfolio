@@ -471,7 +471,7 @@ const Hero = () => {
                         <div className="profile-container">
                             <div className="profile-card">
                                 <div className="profile-image">
-                                    <img src="profile.png" alt="Sharmistha Das" />
+                                    <img src="/profile.png" alt="Sharmistha Das" />
                                 </div>
                                 <h3>Sharmistha Das</h3>
                                 <p>Data Analytics Specialist</p>
@@ -622,7 +622,7 @@ const Projects = () => {
         },
         {
             title: "Student Attendance Management System",
-            tech: "PostgreSQL • Database Design • Application",
+            tech: "PostgreSQL • Database Design",
             description: "Robust PostgreSQL database application for academic attendance tracking with comprehensive data management and real-time reporting capabilities.",
             highlights: [
                 "Created normalized PostgreSQL schema with relational integrity",
@@ -690,7 +690,7 @@ const Contact = () => (
                     </div>
                     <div className="hero-cta" style={{ justifyContent: 'center' }}>
                         <a href="mailto:sharmi.das2711@gmail.com" className="btn btn-primary"><i className="fas fa-paper-plane"></i>Send Message</a>
-                        <a href="Sharmistha_resume.pdf" download className="btn btn-secondary"><i className="fas fa-download"></i>Download Resume</a>
+                        <a href="Sharmistha_resume.pdf" target="_blank" rel="noopener noreferrer" className="btn btn-secondary"><i className="fas fa-download"></i>View Resume</a>
                     </div>
                 </div>
             </AnimatedSectionContent>
@@ -714,4 +714,3 @@ export default function App() {
     </>
   );
 }
-
