@@ -1,10 +1,39 @@
 import React, { useState, useEffect, useRef } from 'react';
+import {
+  Chart as ChartJS,
+  RadialLinearScale,
+  PointElement,
+  LineElement,
+  Filler,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import { Radar } from 'react-chartjs-2';
+
+// Import Swiper React components and modules
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination } from 'swiper/modules';
+
+// Import Swiper styles directly into the component
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+
+ChartJS.register(
+  RadialLinearScale,
+  PointElement,
+  LineElement,
+  Filler,
+  Tooltip,
+  Legend
+);
 
 // --- This component injects all necessary CSS directly into the page ---
 const GlobalStyles = () => (
     <style>{`
         :root {
             --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            --primary-gradient-static: #667eea;
             --secondary-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             --accent-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
             --glass-bg: rgba(255, 255, 255, 0.1);
@@ -59,6 +88,131 @@ const GlobalStyles = () => (
             max-width: 1400px;
             margin: 0 auto;
             padding: 0 2rem;
+        }
+        
+        /* Swiper Customization */
+        .swiper {
+            padding-bottom: 50px !important;
+        }
+        .swiper-button-next, .swiper-button-prev {
+            color: var(--text-primary) !important;
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            width: 44px !important;
+            height: 44px !important;
+            border-radius: 50%;
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
+        }
+        .swiper-button-next:hover, .swiper-button-prev:hover {
+            color: var(--primary-gradient-static) !important;
+            background: var(--glass-bg);
+        }
+        .swiper-button-next::after, .swiper-button-prev::after {
+            font-size: 1rem !important;
+            font-weight: bold;
+        }
+        .swiper-pagination-bullet {
+            background: var(--text-secondary) !important;
+        }
+        .swiper-pagination-bullet-active {
+            background: var(--primary-gradient-static) !important;
+        }
+        .swiper-slide {
+            height: auto; /* Allow slides to grow */
+        }
+
+
+        /* ENHANCED STYLES */
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            border: none;
+            cursor: pointer;
+            background-size: 200% auto;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            background-position: right center;
+        }
+        
+        .btn-primary {
+             background-image: var(--primary-gradient);
+             color: white;
+             box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4);
+        }
+        .btn-primary:hover {
+             box-shadow: 0 12px 40px rgba(102, 126, 234, 0.6);
+        }
+        
+        .btn-secondary { 
+            background-color: #eef2ff; 
+            color: #4338ca; 
+            border: 1px solid transparent; 
+        }
+        .btn-secondary:hover { 
+            background-color: #e0e7ff; 
+        }
+
+        [data-theme="dark"] .btn-secondary { 
+            background: var(--glass-bg); 
+            color: var(--text-primary); 
+            border: 1px solid var(--glass-border); 
+            backdrop-filter: blur(10px); 
+        }
+        [data-theme="dark"] .btn-secondary:hover { 
+            background: var(--glass-border); 
+        }
+        
+        .btn i {
+             transition: var(--transition);
+        }
+        [data-theme="dark"] .btn-secondary i {
+            color: var(--text-primary);
+        }
+        .btn-secondary i {
+            color: #4338ca;
+        }
+
+
+        .neo-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-medium);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .neo-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-heavy);
+            border-color: rgba(102, 126, 234, 0.5);
+        }
+        
+        .skill-icon {
+             background: var(--primary-gradient);
+             background-size: 200% 200%;
+             animation: gradient-animation 4s ease infinite;
+        }
+        
+        @keyframes gradient-animation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         /* Navigation */
@@ -198,16 +352,7 @@ const GlobalStyles = () => (
         .hero-text .subtitle { font-size: 1.4rem; color: var(--text-secondary); margin-bottom: 2rem; font-weight: 400; }
 
         .hero-cta { display: flex; gap: 1rem; margin-bottom: 3rem; flex-wrap: wrap; }
-
-        .btn { padding: 1rem 2rem; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 0.5rem; transition: var(--transition); position: relative; overflow: hidden; border: none; cursor: pointer; }
-        .btn-primary { background: var(--primary-gradient); color: white; box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4); }
-        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(102, 126, 234, 0.6); }
-        .btn-secondary { background: #eef2ff; color: #4338ca; border: 1px solid transparent; }
-        .btn-secondary:hover { transform: translateY(-3px); background: #e0e7ff; }
-
-        [data-theme="dark"] .btn-secondary { background: var(--glass-bg); color: var(--text-primary); border: 1px solid var(--glass-border); backdrop-filter: blur(10px); }
-        [data-theme="dark"] .btn-secondary:hover { background: var(--glass-border); }
-
+        
         .social-proof { display: flex; gap: 2rem; align-items: center; }
         .social-proof a { text-decoration: none; color: inherit; }
         .social-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--text-secondary); }
@@ -254,23 +399,13 @@ const GlobalStyles = () => (
         .skill-badge:hover { background: var(--primary-gradient); color: white; transform: translateY(-2px); }
 
         /* Skills Section */
-        .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; }
         .skill-category { background: var(--card-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: var(--border-radius); padding: 2.5rem; transition: var(--transition); position: relative; overflow: hidden; }
-        .skill-category::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: var(--primary-gradient); }
-        .skill-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; }
-        .skill-icon { width: 50px; height: 50px; background: var(--primary-gradient); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; }
+        .skill-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+        .skill-icon { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; }
         .skill-title { font-size: 1.3rem; font-weight: 700; color: var(--text-primary); }
-        .skill-list { list-style: none; display: grid; gap: 1rem; }
-        .skill-item { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-bottom: 1px solid var(--glass-border); }
-        .skill-item:last-child { border-bottom: none; }
-        .skill-name { font-weight: 600; color: var(--text-primary); }
-        .skill-level { display: flex; align-items: center; gap: 0.5rem; }
-        .skill-bar { width: 100px; height: 6px; background: var(--bg-tertiary); border-radius: 3px; position: relative; overflow: hidden; }
-        .skill-progress { height: 100%; background: var(--primary-gradient); border-radius: 3px; }
-
+       
         /* Projects Section */
         .projects { background: var(--bg-secondary); }
-        .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 2rem; }
         .project-card { background: var(--card-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: var(--border-radius); overflow: hidden; transition: var(--transition); position: relative; }
         .project-card:hover { transform: translateY(-10px); box-shadow: var(--shadow-heavy); }
         .project-header { background: var(--primary-gradient); color: white; padding: 2rem; position: relative; }
@@ -283,7 +418,8 @@ const GlobalStyles = () => (
         .project-highlights li { padding: 0.5rem 0; position: relative; padding-left: 2rem; color: var(--text-secondary); }
         .project-highlights li::before { content: '→'; position: absolute; left: 0; color: transparent; background: var(--primary-gradient); -webkit-background-clip: text; background-clip: text; font-weight: bold; }
         .project-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 1rem; padding-top: 1.5rem; border-top: 1px solid var(--glass-border); }
-        .metric { text-align: center; }
+        .metric { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
+        .metric i { font-size: 1.2rem; color: var(--text-primary); }
         .metric-number { font-size: 1.3rem; font-weight: 700; color: var(--text-primary); display: block; }
         .metric-text { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
 
@@ -334,7 +470,6 @@ const GlobalStyles = () => (
             .nav-links { position: fixed; top: 0; right: -100%; width: 80%; max-width: 300px; height: 100vh; background: var(--card-bg); backdrop-filter: blur(20px); border-left: 1px solid var(--glass-border); flex-direction: column; justify-content: center; padding: 2rem; gap: 2rem; transition: var(--transition); }
             .nav-links.active { right: 0; }
             .hero-text h1 { font-size: clamp(2.5rem, 10vw, 3.5rem); }
-            .skills-grid, .projects-grid { grid-template-columns: 1fr; }
         }
 
         /* Loading Animation */
@@ -348,30 +483,16 @@ const GlobalStyles = () => (
 // --- Custom Hooks ---
 const useIntersectionObserver = (options) => {
     const observer = useRef(null);
-
     const attachRef = (node) => {
         if (observer.current) observer.current.disconnect();
-
         observer.current = new window.IntersectionObserver(([entry]) => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('visible');
-                
-                // Specifically for skill bars
-                const skillBars = entry.target.querySelectorAll('.skill-progress');
-                if (skillBars.length > 0) {
-                    skillBars.forEach(bar => {
-                        bar.style.width = bar.getAttribute('data-width') + '%';
-                        bar.style.transition = 'width 1s ease-in-out';
-                    });
-                }
-                
                 observer.current.unobserve(entry.target);
             }
         }, options);
-
         if (node) observer.current.observe(node);
     };
-
     return [attachRef];
 };
 
@@ -392,15 +513,9 @@ const LoadingScreen = () => {
     );
 };
 
-const Header = () => {
-    const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
+const Header = ({ data, theme, onThemeToggle }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
-
-    useEffect(() => {
-        document.body.setAttribute('data-theme', theme);
-        localStorage.setItem('theme', theme);
-    }, [theme]);
     
     useEffect(() => {
         const handleScroll = () => setIsScrolled(window.scrollY > 100);
@@ -408,7 +523,6 @@ const Header = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
     const toggleMenu = () => setIsMenuOpen(prev => !prev);
     const closeMenu = () => setIsMenuOpen(false);
 
@@ -424,13 +538,13 @@ const Header = () => {
         <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
             <div className="container">
                 <div className="nav-container">
-                    <div className="logo">SD.</div>
+                    <div className="logo">{data.logo}</div>
                     <ul className={`nav-links ${isMenuOpen ? 'active' : ''}`}>
                         {navLinks.map(link => (
                             <li key={link.href}><a href={link.href} onClick={closeMenu}>{link.label}</a></li>
                         ))}
                         <li>
-                            <div className="theme-toggle" onClick={toggleTheme}>
+                            <div className="theme-toggle" onClick={onThemeToggle}>
                                 <i className={theme === 'light' ? 'theme-icon fas fa-moon' : 'theme-icon fas fa-sun'}></i>
                             </div>
                         </li>
@@ -444,11 +558,12 @@ const Header = () => {
     );
 };
 
-const Hero = () => {
+const Hero = ({ data, personalInfo }) => {
     const [heroTitle, setHeroTitle] = useState('');
-    const fullTitle = "Transforming Data Into Insights";
+    const fullTitle = data.headline;
 
     useEffect(() => {
+        if (!fullTitle) return;
         let i = 0;
         setHeroTitle(''); 
         const typingInterval = setInterval(() => {
@@ -460,7 +575,7 @@ const Hero = () => {
             }
         }, 80);
         return () => clearInterval(typingInterval);
-    }, []);
+    }, [fullTitle]);
     
     return (
         <section id="home" className="hero">
@@ -472,35 +587,36 @@ const Hero = () => {
             <div className="container">
                 <div className="hero-content">
                     <div className="hero-text">
-                        <div className="eyebrow">Data Analytics Professional</div>
+                        <div className="eyebrow">{data.eyebrow}</div>
                         <h1 className="text-gradient">{heroTitle}</h1>
-                        <p className="subtitle">I architect intelligent data solutions that drive business growth through advanced analytics, database optimization, and compelling visualizations.</p>
+                        <p className="subtitle">{data.subtitle}</p>
                         <div className="hero-cta">
-                            <a href="#projects" className="btn btn-primary"><i className="fas fa-rocket"></i>Explore My Work</a>
-                            <a href="#contact" className="btn btn-secondary"><i className="fas fa-paper-plane"></i>Let's Connect</a>
+                            <a href={data.cta1.link} className="btn btn-primary"><i className={data.cta1.icon}></i>{data.cta1.text}</a>
+                            <a href={data.cta2.link} className="btn btn-secondary"><i className={data.cta2.icon}></i>{data.cta2.text}</a>
                         </div>
                         <div className="social-proof">
-                            <a href="https://www.hackerrank.com/profile/sharmisthad914" target="_blank" rel="noopener noreferrer" data-tooltip="View HackerRank Profile">
-                                <div className="social-item"><i className="fab fa-hackerrank"></i><span>5★ HackerRank</span></div>
-                            </a>
-                            <a href="https://leetcode.com/u/sharmisthad914/" target="_blank" rel="noopener noreferrer" data-tooltip="View LeetCode Profile">
-                                <div className="social-item"><i className="fas fa-code"></i><span>2★ LeetCode</span></div>
-                            </a>
+                            {data.socialProof.map(item => (
+                                <a key={item.platform} href={item.link} target="_blank" rel="noopener noreferrer" data-tooltip={`View ${item.platform} Profile`}>
+                                    <div className="social-item"><i className={item.icon}></i><span>{item.text}</span></div>
+                                </a>
+                            ))}
                         </div>
                     </div>
                     <div className="hero-visual">
                         <div className="profile-container">
                             <div className="profile-card">
                                 <div className="profile-image">
-                                    <img src="/profile.png" alt="Sharmistha Das" />
+                                    <img src={personalInfo.profilePicture} alt={personalInfo.name} />
                                 </div>
-                                <h3>Sharmistha Das</h3>
-                                <p>Data Analytics Specialist</p>
+                                <h3>{personalInfo.name}</h3>
+                                <p>{personalInfo.title}</p>
                                 <div className="profile-stats">
-                                    <div className="stat-item"><span className="stat-number">10+</span><span className="stat-label">Projects</span></div>
-                                    <div className="stat-item"><span className="stat-number">3+</span><span className="stat-label">Databases</span></div>
-                                    <div className="stat-item"><span className="stat-number">75%</span><span className="stat-label">Time Saved</span></div>
-                                    <div className="stat-item"><span className="stat-number">5</span><span className="stat-label">Tech Stack</span></div>
+                                    {data.stats.map(stat => (
+                                        <div key={stat.label} className="stat-item">
+                                            <span className="stat-number">{stat.value}</span>
+                                            <span className="stat-label">{stat.label}</span>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                         </div>
@@ -516,89 +632,39 @@ const AnimatedSectionContent = ({ children }) => {
     return <div ref={attachRef} className="fade-in">{children}</div>
 }
 
-
-const Skills = () => {
-    const skillsData = [
-        {
-            icon: "fa-database", title: "Database Systems",
-            skills: [{ name: "PostgreSQL", level: 95 }, { name: "MySQL", level: 85 }, { name: "Database Design", level: 90 }, { name: "Query Optimization", level: 88 }]
-        },
-        {
-            icon: "fa-chart-bar", title: "Business Intelligence",
-            skills: [{ name: "Power BI", level: 93 }, { name: "DAX", level: 82 }, { name: "Data Modeling", level: 85 }, { name: "Dashboard Development", level: 90 }]
-        },
-        {
-            icon: "fa-code", title: "Programming & Analytics",
-            skills: [{ name: "Python", level: 78 }, { name: "Advanced SQL", level: 95 }, { name: "Statistical Analysis", level: 85 }, { name: "ETL/ELT", level: 88 }]
-        },
-        {
-            icon: "fa-tools", title: "Professional Tools",
-            skills: [{ name: "Data Visualization", level: 90 }, { name: "Report Automation", level: 85 }, { name: "Data Warehousing", level: 82 }, { name: "Performance Tuning", level: 88 }]
-        },
-    ];
-
-    const [attachRef] = useIntersectionObserver({ threshold: 0.2 });
-
-    return (
-        <section id="skills" className="section skills">
-            <div className="container" ref={attachRef}>
-                <AnimatedSectionContent>
-                    <div className="section-header">
-                        <div className="section-eyebrow">Technical Expertise</div>
-                        <h2 className="section-title">Skills & Technologies</h2>
-                        <p className="section-subtitle">Comprehensive toolkit for modern data challenges</p>
-                    </div>
-                    <div className="skills-grid">
-                        {skillsData.map(category => (
-                            <div key={category.title} className="skill-category">
-                                <div className="skill-header">
-                                    <div className="skill-icon"><i className={`fas ${category.icon}`}></i></div>
-                                    <div className="skill-title">{category.title}</div>
-                                </div>
-                                <ul className="skill-list">
-                                    {category.skills.map(skill => (
-                                        <li key={skill.name} className="skill-item">
-                                            <span className="skill-name">{skill.name}</span>
-                                            <div className="skill-level">
-                                                <div className="skill-bar">
-                                                    <div className="skill-progress" data-width={skill.level}></div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        ))}
-                    </div>
-                </AnimatedSectionContent>
-            </div>
-        </section>
-    );
-};
-
-const About = () => (
+const About = ({ data }) => (
     <section id="about" className="section about">
         <div className="container">
           <AnimatedSectionContent>
             <div className="section-header">
-                <div className="section-eyebrow">Get to know me</div>
-                <h2 className="section-title">About Me</h2>
-                <p className="section-subtitle">Passionate about turning complex data challenges into elegant solutions</p>
+                <div className="section-eyebrow">{data.eyebrow}</div>
+                <h2 className="section-title">{data.title}</h2>
+                <p className="section-subtitle">{data.subtitle}</p>
             </div>
             <div className="about-grid">
                 <div className="about-stats">
-                    <div className="metric-card"><a href="https://www.hackerrank.com/profile/sharmisthad914" target="_blank" rel="noopener noreferrer"><span className="metric-value">5★</span><span className="metric-label">HackerRank</span></a></div>
-                    <div className="metric-card"><a href="https://leetcode.com/u/sharmisthad914/" target="_blank" rel="noopener noreferrer"><span className="metric-value">2★</span><span className="metric-label">LeetCode</span></a></div>
-                    <div className="metric-card"><span className="metric-value">10K+</span><span className="metric-label">Records Managed</span></div>
-                    <div className="metric-card"><span className="metric-value">5+</span><span className="metric-label">Tech Stacks</span></div>
+                    {data.stats.map(stat => (
+                        <div key={stat.label} className="metric-card">
+                            {stat.link ? (
+                                <a href={stat.link} target="_blank" rel="noopener noreferrer">
+                                    <span className="metric-value">{stat.value}</span>
+                                    <span className="metric-label">{stat.label}</span>
+                                </a>
+                            ) : (
+                                <>
+                                    <span className="metric-value">{stat.value}</span>
+                                    <span className="metric-label">{stat.label}</span>
+                                </>
+                            )}
+                        </div>
+                    ))}
                 </div>
                 <div className="about-content">
                     <div className="about-text">
-                        <p>I'm a results-driven Computer Science Engineering graduate from JIS College of Engineering, Kalyani, specializing in transforming complex datasets into actionable business intelligence. My expertise spans database architecture, advanced analytics, and interactive dashboard development.</p>
-                        <p>With proven experience in PostgreSQL, Power BI, and statistical analysis, I've successfully delivered solutions that reduce manual analysis time by 75% while enabling data-driven decision making across organizations.</p>
+                        {data.paragraphs.map((p, i) => <p key={i}>{p}</p>)}
                     </div>
                     <div className="skills-preview">
-                        {['PostgreSQL', 'Power BI', 'Python', 'SQL', 'Analytics', 'ETL/ELT'].map(skill => <div key={skill} className="skill-badge">{skill}</div>)}
+                        {data.previewSkills.map(skill => <div key={skill} className="skill-badge">{skill}</div>)}
                     </div>
                 </div>
             </div>
@@ -607,56 +673,120 @@ const About = () => (
     </section>
 );
 
-
-const Projects = () => {
-    const projectsData = [
-        {
-            title: "Sales Performance Analytics Dashboard",
-            tech: "Power BI • ETL • Data Visualization",
-            description: "Comprehensive sales analytics solution featuring 20+ interactive visualizations and automated reporting processes, transforming raw business data into actionable insights.",
-            highlights: [
-                "Integrated multiple data sources with complex transformations",
-                "Built dynamic dashboards with trend analysis and geographic mapping",
-                "Established robust data relationships using DAX"
-            ],
-            metrics: [{ value: "75%", label: "Time Reduction" }, { value: "20+", label: "Visualizations" }, { value: "5", label: "Data Sources" }]
+const Skills = ({ data, theme }) => {
+    const [attachRef] = useIntersectionObserver({ threshold: 0.2 });
+    
+    // Memoize options to prevent re-creation on every render
+    const chartOptions = React.useMemo(() => ({
+        scales: {
+            r: {
+                angleLines: { color: theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' },
+                grid: { color: theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' },
+                pointLabels: {
+                    color: theme === 'dark' ? '#ccc' : '#333',
+                    font: {
+                        family: "'Inter', sans-serif",
+                        size: 12,
+                    },
+                },
+                ticks: {
+                    color: theme === 'dark' ? '#999' : '#666',
+                    backdropColor: 'transparent',
+                    stepSize: 25,
+                    max: 100,
+                    min: 0
+                }
+            }
         },
-        {
-            title: "Digital Music Store Data Analysis",
-            tech: "PostgreSQL • Advanced SQL • Statistics",
-            description: "Comprehensive exploratory data analysis on a digital music store database using advanced SQL techniques to uncover business insights.",
-            highlights: [
-                "Solved 10+ complex analytical problems using advanced SQL",
-                "Applied subqueries, CTEs, and window functions for deep insights",
-                "Identified customer purchasing patterns and seasonal trends"
-            ],
-            metrics: [{ value: "10+", label: "SQL Queries" }, { value: "30+", label: "Insights" }, { value: "100%", label: "Accuracy" }]
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                 callbacks: {
+                    label: (context) => {
+                       const label = Array.isArray(context.label) ? context.label.join(' ') : context.label;
+                       return `${label}: ${context.raw}%`;
+                    }
+                }
+            }
         },
-        {
-            title: "Student Attendance Management System",
-            tech: "PostgreSQL • Database Design • Application",
-            description: "Robust PostgreSQL database application for academic attendance tracking with comprehensive data management and real-time reporting capabilities.",
-            highlights: [
-                "Created normalized PostgreSQL schema with relational integrity",
-                "Wrote optimized SQL queries with JOIN clauses for reports",
-                "Designed time-based reporting with flexible date range filtering"
-            ],
-            metrics: [{ value: "10K+", label: "Records" }, { value: "95%", label: "Performance" }, { value: "100%", label: "Uptime" }]
-        },
-    ];
+        maintainAspectRatio: false
+    }), [theme]);
 
     return (
-        <section id="projects" className="section projects">
-            <div className="container">
+        <section id="skills" className="section skills">
+            <div className="container" ref={attachRef}>
                 <AnimatedSectionContent>
                     <div className="section-header">
-                        <div className="section-eyebrow">Portfolio</div>
-                        <h2 className="section-title">Featured Projects</h2>
-                        <p className="section-subtitle">Real-world solutions that drive business impact</p>
+                        <div className="section-eyebrow">{data.eyebrow}</div>
+                        <h2 className="section-title">{data.title}</h2>
+                        <p className="section-subtitle">{data.subtitle}</p>
                     </div>
-                    <div className="projects-grid">
-                        {projectsData.map(project => (
-                            <div key={project.title} className="project-card">
+                    <Swiper
+                        modules={[Navigation, Pagination]}
+                        spaceBetween={30}
+                        slidesPerView={1}
+                        navigation
+                        pagination={{ clickable: true }}
+                        breakpoints={{
+                            768: { slidesPerView: 2 },
+                            1024: { slidesPerView: 3 },
+                        }}
+                    >
+                        {data.categories.map(category => (
+                             <SwiperSlide key={category.title}>
+                                <div className="skill-category neo-card">
+                                    <div className="skill-header">
+                                        <div className="skill-icon"><i className={`fas ${category.icon}`}></i></div>
+                                        <div className="skill-title">{category.title}</div>
+                                    </div>
+                                    <div style={{ height: '350px' }}>
+                                        <Radar 
+                                            data={{
+                                                labels: category.skills.map(s => s.name),
+                                                datasets: [{
+                                                    label: 'Proficiency',
+                                                    data: category.skills.map(s => s.level),
+                                                    backgroundColor: 'rgba(118, 75, 162, 0.2)',
+                                                    borderColor: 'rgba(102, 126, 234, 1)',
+                                                    borderWidth: 2,
+                                                }]
+                                            }} 
+                                            options={chartOptions} 
+                                        />
+                                    </div>
+                                </div>
+                            </SwiperSlide>
+                        ))}
+                    </Swiper>
+                </AnimatedSectionContent>
+            </div>
+        </section>
+    );
+};
+
+const Projects = ({ data }) => (
+    <section id="projects" className="section projects">
+        <div className="container">
+            <AnimatedSectionContent>
+                <div className="section-header">
+                    <div className="section-eyebrow">{data.eyebrow}</div>
+                    <h2 className="section-title">{data.title}</h2>
+                    <p className="section-subtitle">{data.subtitle}</p>
+                </div>
+                <Swiper
+                     modules={[Navigation, Pagination]}
+                     spaceBetween={30}
+                     slidesPerView={1}
+                     navigation
+                     pagination={{ clickable: true }}
+                     breakpoints={{
+                         768: { slidesPerView: 2 },
+                         1200: { slidesPerView: 3 },
+                     }}
+                >
+                    {data.items.map(project => (
+                        <SwiperSlide key={project.title}>
+                            <div className="project-card neo-card">
                                 <div className="project-header">
                                     <div className="project-title">{project.title}</div>
                                     <div className="project-tech">{project.tech}</div>
@@ -669,6 +799,7 @@ const Projects = () => {
                                     <div className="project-metrics">
                                         {project.metrics.map(metric => (
                                             <div key={metric.label} className="metric">
+                                                <i className={metric.icon}></i>
                                                 <span className="metric-number">{metric.value}</span>
                                                 <span className="metric-text">{metric.label}</span>
                                             </div>
@@ -676,29 +807,34 @@ const Projects = () => {
                                     </div>
                                 </div>
                             </div>
-                        ))}
-                    </div>
-                </AnimatedSectionContent>
-            </div>
-        </section>
-    );
-};
+                        </SwiperSlide>
+                    ))}
+                </Swiper>
+            </AnimatedSectionContent>
+        </div>
+    </section>
+);
 
-const Contact = () => (
+const Contact = ({ data }) => (
     <section id="contact" className="section contact">
         <div className="container">
             <AnimatedSectionContent>
                 <div className="section-header">
-                    <div className="section-eyebrow">Let's Connect</div>
-                    <h2 className="section-title">Ready to Collaborate?</h2>
-                    <p className="section-subtitle">Transform your data challenges into growth opportunities. Let's discuss how I can help your organization unlock the power of analytics.</p>
+                    <div className="section-eyebrow">{data.eyebrow}</div>
+                    <h2 className="section-title">{data.title}</h2>
+                    <p className="section-subtitle">{data.subtitle}</p>
                 </div>
                 <div className="contact-content">
                     <div className="contact-grid">
-                        <div className="contact-item"><a href="https://www.linkedin.com/in/sharmi-d/" target="_blank" rel="noopener noreferrer"><div className="contact-icon"><i className="fab fa-linkedin"></i></div><div className="contact-label">LinkedIn</div><div className="contact-value">/in/sharmi-d</div></a></div>
-                        <div className="contact-item"><a href="tel:+919749862064"><div className="contact-icon"><i className="fas fa-phone"></i></div><div className="contact-label">Phone</div><div className="contact-value">+91 9749862064</div></a></div>
-                        <div className="contact-item"><a href="mailto:sharmi.das2711@gmail.com"><div className="contact-icon"><i className="fas fa-envelope"></i></div><div className="contact-label">Email</div><div className="contact-value">sharmi.das2711@gmail.com</div></a></div>
-                        <div className="contact-item"><div className="contact-icon"><i className="fas fa-map-marker-alt"></i></div><div className="contact-label">Location</div><div className="contact-value">West Bengal, India</div></div>
+                        {data.items.map(item => (
+                            <div key={item.label} className="contact-item neo-card">
+                                <a href={item.link} target="_blank" rel="noopener noreferrer">
+                                    <div className="contact-icon"><i className={item.icon}></i></div>
+                                    <div className="contact-label">{item.label}</div>
+                                    <div className="contact-value">{item.value}</div>
+                                </a>
+                            </div>
+                        ))}
                     </div>
                     <div className="hero-cta" style={{ justifyContent: 'center' }}>
                         <a href="mailto:sharmi.das2711@gmail.com" className="btn btn-primary"><i className="fas fa-paper-plane"></i>Send Message</a>
@@ -710,26 +846,52 @@ const Contact = () => (
     </section>
 );
 
-const Footer = () => (
+const Footer = ({ data }) => (
     <footer className="footer">
-        <p>Designed & Developed by Sharmistha</p>
+        <p>{data.text}</p>
     </footer>
 );
 
 export default function App() {
+  const [portfolioData, setPortfolioData] = useState(null);
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
+
+  useEffect(() => {
+      document.body.setAttribute('data-theme', theme);
+      localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
+
+  useEffect(() => {
+      fetch('./data.json')
+          .then(response => {
+              if (!response.ok) {
+                  throw new Error('Network response was not ok');
+              }
+              return response.json();
+          })
+          .then(data => setPortfolioData(data))
+          .catch(error => console.error("Failed to fetch portfolio data:", error));
+  }, []);
+
+  if (!portfolioData) {
+    return <LoadingScreen />;
+  }
+
   return (
     <>
       <GlobalStyles />
-      <LoadingScreen />
-      <Header />
+      <Header data={portfolioData.personalInfo} theme={theme} onThemeToggle={toggleTheme} />
       <main>
-        <Hero />
-        <About />
-        <Skills />
-        <Projects />
-        <Contact />
+        <Hero data={portfolioData.hero} personalInfo={portfolioData.personalInfo} />
+        <About data={portfolioData.about} />
+        <Skills data={portfolioData.skills} theme={theme} />
+        <Projects data={portfolioData.projects} />
+        <Contact data={portfolioData.contact} />
       </main>
-      <Footer />
+      <Footer data={portfolioData.footer} />
     </>
   );
 }
+

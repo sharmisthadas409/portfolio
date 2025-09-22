@@ -1,0 +1,228 @@
+{
+  "personalInfo": {
+    "name": "Sharmistha Das",
+    "title": "Data Analytics Specialist",
+    "logo": "SD.",
+    "profilePicture": "/profile.png"
+  },
+  "hero": {
+    "eyebrow": "Data Analytics Professional",
+    "headline": "Transforming Data Into Insights",
+    "subtitle": "I architect intelligent data solutions that drive business growth through advanced analytics, database optimization, and compelling visualizations.",
+    "cta1": {
+      "text": "Explore My Work",
+      "link": "#projects",
+      "icon": "fas fa-rocket"
+    },
+    "cta2": {
+      "text": "Let's Connect",
+      "link": "#contact",
+      "icon": "fas fa-paper-plane"
+    },
+    "socialProof": [
+      {
+        "platform": "HackerRank",
+        "link": "https://www.hackerrank.com/profile/sharmisthad914",
+        "text": "5★ HackerRank",
+        "icon": "fab fa-hackerrank"
+      },
+      {
+        "platform": "LeetCode",
+        "link": "https://leetcode.com/u/sharmisthad914/",
+        "text": "2★ LeetCode",
+        "icon": "fas fa-code"
+      }
+    ],
+    "stats": [
+      { "value": "10+", "label": "Projects" },
+      { "value": "3+", "label": "Databases" },
+      { "value": "75%", "label": "Time Saved" },
+      { "value": "5", "label": "Tech Stack" }
+    ]
+  },
+  "about": {
+    "eyebrow": "Get to know me",
+    "title": "About Me",
+    "subtitle": "Passionate about turning complex data challenges into elegant solutions",
+    "stats": [
+      {
+        "value": "5★",
+        "label": "HackerRank",
+        "link": "https://www.hackerrank.com/profile/sharmisthad914"
+      },
+      {
+        "value": "2★",
+        "label": "LeetCode",
+        "link": "https://leetcode.com/u/sharmisthad914/"
+      },
+      { "value": "10K+", "label": "Records Managed" },
+      { "value": "5+", "label": "Tech Stacks" }
+    ],
+    "paragraphs": [
+      "As a results-driven Computer Science graduate from JIS College of Engineering, I am passionate about transforming complex data into strategic business intelligence. I specialize in the full data lifecycle, from designing and optimizing robust PostgreSQL databases to developing predictive machine learning models using Python (Pandas, Scikit-learn) for tasks like customer segmentation. I excel at bringing these insights to life through insightful, interactive Power BI dashboards that track critical KPIs and empower stakeholders with clear, accessible data stories.",
+      " With a proven track record of creating significant business impact, I have successfully delivered solutions that reduced manual analysis time by 75%, thereby accelerating decision-making and enabling a greater focus on strategic organizational growth."
+    ],
+    "previewSkills": [
+      "PostgreSQL",
+      "Power BI",
+      "Python",
+      "SQL",
+      "Analytics",
+      "ETL/ELT",
+      "Data Modeling",
+      "scikit-learn"
+    ]
+  },
+  "skills": {
+    "eyebrow": "Technical Expertise",
+    "title": "Skills & Technologies",
+    "subtitle": "Comprehensive toolkit for modern data challenges",
+    "categories": [
+      {
+        "title": "Database Technologies",
+        "icon": "fa-database",
+        "skills": [
+          { "name": "PostgreSQL", "level": 95 },
+          { "name": "MySQL", "level": 85 },
+          { "name": ["Database", "Design"], "level": 90 },
+          { "name": "RDBMS", "level": 90 },
+          { "name": ["Query", "Optimization"], "level": 88 }
+        ]
+      },
+      {
+        "title": "Business Intelligence",
+        "icon": "fa-chart-bar",
+        "skills": [
+          { "name": "Power BI", "level": 93 },
+          { "name": ["Power Query", "Editor"], "level": 90 },
+          { "name": ["Data", "Modeling"], "level": 85 },
+          { "name": ["Dashboard", "Development"], "level": 90 },
+          { "name": "DAX", "level": 82 }
+        ]
+      },
+      {
+        "title": "Data Analysis & ML",
+        "icon": "fa-code",
+        "skills": [
+          { "name": ["Python", "(Pandas, NumPy)"], "level": 85 },
+          { "name": "Scikit-learn", "level": 80 },
+          { "name": ["Machine Learning", "(Clustering)"], "level": 82 },
+          { "name": ["Statistical", "Analysis"], "level": 85 },
+          { "name": ["Analysis", "(EDA)"], "level": 90 }
+        ]
+      },
+      {
+        "title": "Tools & Technologies",
+        "icon": "fa-tools",
+        "skills": [
+          { "name": ["Data", "Visualization"], "level": 92 },
+          { "name": ["Report", "Automation"], "level": 85 },
+          { "name": ["Data", "Warehousing"], "level": 82 },
+          { "name": ["Performance", "Tuning"], "level": 88 },
+          { "name": ["Matplotlib &", "Seaborn"], "level": 80 }
+        ]
+      }
+    ]
+  },
+  "projects": {
+    "eyebrow": "Portfolio",
+    "title": "Featured Projects",
+    "subtitle": "Real-world solutions that drive business impact",
+    "items": [
+      {
+        "title": "Sales Performance Analytics Dashboard",
+        "tech": "Power BI • ETL • Data Visualization",
+        "description": "Comprehensive sales analytics solution featuring 20+ interactive visualizations and automated reporting processes, transforming raw business data into actionable insights.",
+        "highlights": [
+          "Integrated multiple data sources with complex transformations",
+          "Built dynamic dashboards with trend analysis and geographic mapping",
+          "Established robust data relationships using DAX"
+        ],
+        "metrics": [
+          { "value": "75%", "label": "Time Reduction", "icon": "fas fa-clock" },
+          { "value": "20+", "label": "Visualizations", "icon": "fas fa-chart-pie" },
+          { "value": "5", "label": "Data Sources", "icon": "fas fa-link" }
+        ]
+      },
+      {
+        "title": "Digital Music Store Data Analysis",
+        "tech": "PostgreSQL • Advanced SQL • Statistics",
+        "description": "Comprehensive exploratory data analysis on a digital music store database using advanced SQL techniques to uncover business insights.",
+        "highlights": [
+          "Solved 10+ complex analytical problems using advanced SQL",
+          "Applied subqueries, CTEs, and window functions for deep insights",
+          "Identified customer purchasing patterns and seasonal trends"
+        ],
+        "metrics": [
+          { "value": "10+", "label": "SQL Queries", "icon": "fas fa-file-code" },
+          { "value": "30+", "label": "Insights", "icon": "fas fa-lightbulb" },
+          { "value": "100%", "label": "Accuracy", "icon": "fas fa-check-circle" }
+        ]
+      },
+      {
+        "title": "E-commerce Customer Segmentation Analysis",
+        "tech": "Python | Scikit-learn | Data Analysis & Machine Learning",
+        "description": "Developed a comprehensive Python application for e-commerce sales analysis, leveraging data modeling for customer segmentation.",
+        "highlights": [
+          "Engineered an RFM (Recency, Frequency, Monetary) model and implemented K-Means clustering to partition the customer base into distinct profiles.",
+          "Wrote optimized Pandas scripts with data aggregation and transformation functions to conduct exploratory data analysis and uncover sales trends.",
+          "Designed a profiling system that translated cluster data into actionable marketing strategies, enabling personalized engagement for each customer segment."
+        ],
+        "metrics": [
+          { "value": "5", "label": "Segments Identified", "icon": "fas fa-users-cog" },
+          { "value": "20%", "label": "Engagement Uplift", "icon": "fas fa-chart-line" },
+          { "value": "100K+", "label": "Records Analyzed", "icon": "fas fa-database" }
+        ]
+      },
+      {
+        "title": "Student Attendance Management System",
+        "tech": "PostgreSQL • Database Design • Application",
+        "description": "Robust PostgreSQL database application for academic attendance tracking with comprehensive data management and real-time reporting capabilities.",
+        "highlights": [
+          "Created normalized PostgreSQL schema with relational integrity",
+          "Wrote optimized SQL queries with JOIN clauses for reports",
+          "Designed time-based reporting with flexible date range filtering"
+        ],
+        "metrics": [
+          { "value": "10K+", "label": "Records", "icon": "fas fa-list-ol" },
+          { "value": "95%", "label": "Performance", "icon": "fas fa-tachometer-alt" },
+          { "value": "100%", "label": "Uptime", "icon": "fas fa-server" }
+        ]
+      }
+    ]
+  },
+  "contact": {
+    "eyebrow": "Let's Connect",
+    "title": "Ready to Collaborate?",
+    "subtitle": "Transform your data challenges into growth opportunities. Let's discuss how I can help your organization unlock the power of analytics.",
+    "items": [
+      {
+        "label": "LinkedIn",
+        "value": "/in/sharmi-d",
+        "link": "https://www.linkedin.com/in/sharmi-d/",
+        "icon": "fab fa-linkedin"
+      },
+      {
+        "label": "Phone",
+        "value": "+91 9749862064",
+        "link": "tel:+919749862064",
+        "icon": "fas fa-phone"
+      },
+      {
+        "label": "Email",
+        "value": "sharmi.das2711@gmail.com",
+        "link": "mailto:sharmi.das2711@gmail.com",
+        "icon": "fas fa-envelope"
+      },
+      {
+        "label": "Location",
+        "value": "West Bengal, India",
+        "icon": "fas fa-map-marker-alt"
+      }
+    ]
+  },
+  "footer": {
+    "text": "Designed & Developed by Sharmistha"
+  }
+}
+
