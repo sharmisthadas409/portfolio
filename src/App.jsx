@@ -731,6 +731,8 @@ const About = ({ data }) => (
 const CustomCarousel = ({ children, containerClass = '' }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const items = React.Children.toArray(children);
+    const touchStartX = useRef(0);
+    const touchEndX = useRef(0);
 
     const goToPrevious = () => {
         const isFirstSlide = currentIndex === 0;
@@ -748,9 +750,38 @@ const CustomCarousel = ({ children, containerClass = '' }) => {
         setCurrentIndex(index);
     }
 
+    const handleTouchStart = (e) => {
+        touchEndX.current = 0; // Reset end position
+        touchStartX.current = e.targetTouches[0].clientX;
+    };
+
+    const handleTouchMove = (e) => {
+        touchEndX.current = e.targetTouches[0].clientX;
+    };
+
+    const handleTouchEnd = () => {
+        if (touchStartX.current && touchEndX.current) {
+            const difference = touchStartX.current - touchEndX.current;
+            // Swipe left
+            if (difference > 50) {
+                goToNext();
+            }
+            // Swipe right
+            if (difference < -50) {
+                goToPrevious();
+            }
+        }
+    };
+
+
     return (
         <div className={`carousel-container ${containerClass}`}>
-            <div className="carousel-wrapper project-carousel-wrapper">
+            <div 
+                className="carousel-wrapper project-carousel-wrapper"
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+            >
                  {items.map((child, index) => (
                     <div key={index} className={`carousel-slide ${index === currentIndex ? 'active' : ''}`}>
                        {child}
