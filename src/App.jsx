@@ -10,15 +10,6 @@ import {
 } from 'chart.js';
 import { Radar } from 'react-chartjs-2';
 
-// Import Swiper React components and modules
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination } from 'swiper/modules';
-
-// Import Swiper styles directly into the component
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
-
 ChartJS.register(
   RadialLinearScale,
   PointElement,
@@ -70,7 +61,7 @@ const GlobalStyles = () => (
             padding: 0;
             box-sizing: border-box;
         }
-
+        
         html {
             scroll-behavior: smooth;
         }
@@ -90,36 +81,80 @@ const GlobalStyles = () => (
             padding: 0 2rem;
         }
         
-        /* Swiper Customization */
-        .swiper {
-            padding-bottom: 50px !important;
+        /* Custom Carousel Styles */
+        .carousel-container {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
         }
-        .swiper-button-next, .swiper-button-prev {
-            color: var(--text-primary) !important;
+        .skills-carousel-container {
+             max-width: 500px;
+        }
+        .carousel-wrapper {
+            overflow: hidden;
+            position: relative;
+            min-height: 550px; /* Adjust as needed */
+        }
+        .project-carousel-wrapper {
+             min-height: 650px;
+        }
+        .carousel-slide {
+            width: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .carousel-slide.active {
+            opacity: 1;
+            position: relative;
+        }
+        .carousel-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-70%);
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
             background: var(--card-bg);
             border: 1px solid var(--glass-border);
-            width: 44px !important;
-            height: 44px !important;
-            border-radius: 50%;
-            backdrop-filter: blur(10px);
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
             transition: var(--transition);
         }
-        .swiper-button-next:hover, .swiper-button-prev:hover {
-            color: var(--primary-gradient-static) !important;
+        .carousel-nav:hover {
+            color: var(--primary-gradient-static);
             background: var(--glass-bg);
         }
-        .swiper-button-next::after, .swiper-button-prev::after {
-            font-size: 1rem !important;
-            font-weight: bold;
+        .carousel-prev { left: -60px; }
+        .carousel-next { right: -60px; }
+        .carousel-pagination {
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
         }
-        .swiper-pagination-bullet {
-            background: var(--text-secondary) !important;
+        .pagination-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
         }
-        .swiper-pagination-bullet-active {
-            background: var(--primary-gradient-static) !important;
+        .pagination-dot.active {
+            background: var(--primary-gradient-static);
+            transform: scale(1.2);
         }
-        .swiper-slide {
-            height: auto; /* Allow slides to grow */
+        @media (max-width: 768px) {
+            .carousel-nav { display: none; }
         }
 
 
@@ -195,6 +230,7 @@ const GlobalStyles = () => (
             position: relative;
             overflow: hidden;
             height: 100%;
+            width: 100%;
         }
 
         .neo-card:hover {
@@ -261,6 +297,7 @@ const GlobalStyles = () => (
             font-size: 0.95rem;
             position: relative;
             transition: var(--transition);
+            cursor: pointer;
         }
 
         .nav-links a::after {
@@ -377,7 +414,7 @@ const GlobalStyles = () => (
         .stat-label { font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
 
         /* Sections */
-        .section { padding: 6rem 0; position: relative; }
+        .section { padding: 6rem 0; position: relative; scroll-margin-top: 80px; }
         .section-header { text-align: center; margin-bottom: 4rem; }
         .section-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--text-secondary); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 1rem; }
         .section-title { font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 800; background: var(--primary-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1rem; }
@@ -522,16 +559,23 @@ const Header = ({ data, theme, onThemeToggle }) => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
-
-    const toggleMenu = () => setIsMenuOpen(prev => !prev);
-    const closeMenu = () => setIsMenuOpen(false);
+    
+    const handleSmoothScroll = (e) => {
+        e.preventDefault();
+        const targetId = e.currentTarget.getAttribute('href').substring(1);
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+             targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        setIsMenuOpen(false);
+    };
 
     const navLinks = [
-        { href: "#home", label: "Home" },
-        { href: "#about", label: "About" },
-        { href: "#skills", label: "Skills" },
-        { href: "#projects", label: "Projects" },
-        { href: "#contact", label: "Contact" },
+        { to: "home", label: "Home" },
+        { to: "about", label: "About" },
+        { to: "skills", label: "Skills" },
+        { to: "projects", label: "Projects" },
+        { to: "contact", label: "Contact" },
     ];
 
     return (
@@ -541,7 +585,9 @@ const Header = ({ data, theme, onThemeToggle }) => {
                     <div className="logo">{data.logo}</div>
                     <ul className={`nav-links ${isMenuOpen ? 'active' : ''}`}>
                         {navLinks.map(link => (
-                            <li key={link.href}><a href={link.href} onClick={closeMenu}>{link.label}</a></li>
+                            <li key={link.to}>
+                                <a href={`#${link.to}`} onClick={handleSmoothScroll}>{link.label}</a>
+                            </li>
                         ))}
                         <li>
                             <div className="theme-toggle" onClick={onThemeToggle}>
@@ -549,7 +595,7 @@ const Header = ({ data, theme, onThemeToggle }) => {
                             </div>
                         </li>
                     </ul>
-                    <button className="mobile-menu-btn" onClick={toggleMenu}>
+                    <button className="mobile-menu-btn" onClick={() => setIsMenuOpen(!isMenuOpen)}>
                         <i className={`fas ${isMenuOpen ? 'fa-times' : 'fa-bars'}`}></i>
                     </button>
                 </div>
@@ -577,8 +623,17 @@ const Hero = ({ data, personalInfo }) => {
         return () => clearInterval(typingInterval);
     }, [fullTitle]);
     
+    const handleSmoothScroll = (e) => {
+        e.preventDefault();
+        const targetId = e.currentTarget.getAttribute('href').substring(1);
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+             targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    };
+    
     return (
-        <section id="home" className="hero">
+        <section id="home" className="section hero">
             <div className="floating-shapes">
                 <div className="shape shape-1"></div>
                 <div className="shape shape-2"></div>
@@ -591,8 +646,8 @@ const Hero = ({ data, personalInfo }) => {
                         <h1 className="text-gradient">{heroTitle}</h1>
                         <p className="subtitle">{data.subtitle}</p>
                         <div className="hero-cta">
-                            <a href={data.cta1.link} className="btn btn-primary"><i className={data.cta1.icon}></i>{data.cta1.text}</a>
-                            <a href={data.cta2.link} className="btn btn-secondary"><i className={data.cta2.icon}></i>{data.cta2.text}</a>
+                            <a href="#projects" onClick={handleSmoothScroll} className="btn btn-primary"><i className={data.cta1.icon}></i>{data.cta1.text}</a>
+                            <a href="#contact" onClick={handleSmoothScroll} className="btn btn-secondary"><i className={data.cta2.icon}></i>{data.cta2.text}</a>
                         </div>
                         <div className="social-proof">
                             {data.socialProof.map(item => (
@@ -673,6 +728,47 @@ const About = ({ data }) => (
     </section>
 );
 
+const CustomCarousel = ({ children, containerClass = '' }) => {
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const items = React.Children.toArray(children);
+
+    const goToPrevious = () => {
+        const isFirstSlide = currentIndex === 0;
+        const newIndex = isFirstSlide ? items.length - 1 : currentIndex - 1;
+        setCurrentIndex(newIndex);
+    };
+
+    const goToNext = () => {
+        const isLastSlide = currentIndex === items.length - 1;
+        const newIndex = isLastSlide ? 0 : currentIndex + 1;
+        setCurrentIndex(newIndex);
+    };
+    
+    const goToSlide = (index) => {
+        setCurrentIndex(index);
+    }
+
+    return (
+        <div className={`carousel-container ${containerClass}`}>
+            <div className="carousel-wrapper project-carousel-wrapper">
+                 {items.map((child, index) => (
+                    <div key={index} className={`carousel-slide ${index === currentIndex ? 'active' : ''}`}>
+                       {child}
+                    </div>
+                ))}
+            </div>
+            <button onClick={goToPrevious} className="carousel-nav carousel-prev"><i className="fas fa-chevron-left"></i></button>
+            <button onClick={goToNext} className="carousel-nav carousel-next"><i className="fas fa-chevron-right"></i></button>
+            <div className="carousel-pagination">
+                {items.map((_, index) => (
+                    <div key={index} className={`pagination-dot ${index === currentIndex ? 'active' : ''}`} onClick={() => goToSlide(index)}></div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+
 const Skills = ({ data, theme }) => {
     const [attachRef] = useIntersectionObserver({ threshold: 0.2 });
     
@@ -721,43 +817,31 @@ const Skills = ({ data, theme }) => {
                         <h2 className="section-title">{data.title}</h2>
                         <p className="section-subtitle">{data.subtitle}</p>
                     </div>
-                    <Swiper
-                        modules={[Navigation, Pagination]}
-                        spaceBetween={30}
-                        slidesPerView={1}
-                        navigation
-                        pagination={{ clickable: true }}
-                        breakpoints={{
-                            768: { slidesPerView: 2 },
-                            1024: { slidesPerView: 3 },
-                        }}
-                    >
+                     <CustomCarousel containerClass="skills-carousel-container">
                         {data.categories.map(category => (
-                             <SwiperSlide key={category.title}>
-                                <div className="skill-category neo-card">
-                                    <div className="skill-header">
-                                        <div className="skill-icon"><i className={`fas ${category.icon}`}></i></div>
-                                        <div className="skill-title">{category.title}</div>
-                                    </div>
-                                    <div style={{ height: '350px' }}>
-                                        <Radar 
-                                            data={{
-                                                labels: category.skills.map(s => s.name),
-                                                datasets: [{
-                                                    label: 'Proficiency',
-                                                    data: category.skills.map(s => s.level),
-                                                    backgroundColor: 'rgba(118, 75, 162, 0.2)',
-                                                    borderColor: 'rgba(102, 126, 234, 1)',
-                                                    borderWidth: 2,
-                                                }]
-                                            }} 
-                                            options={chartOptions} 
-                                        />
-                                    </div>
+                            <div key={category.title} className="skill-category neo-card">
+                                <div className="skill-header">
+                                    <div className="skill-icon"><i className={`fas ${category.icon}`}></i></div>
+                                    <div className="skill-title">{category.title}</div>
                                 </div>
-                            </SwiperSlide>
+                                <div style={{ height: '350px' }}>
+                                    <Radar 
+                                        data={{
+                                            labels: category.skills.map(s => s.name),
+                                            datasets: [{
+                                                label: 'Proficiency',
+                                                data: category.skills.map(s => s.level),
+                                                backgroundColor: 'rgba(118, 75, 162, 0.2)',
+                                                borderColor: 'rgba(102, 126, 234, 1)',
+                                                borderWidth: 2,
+                                            }]
+                                        }} 
+                                        options={chartOptions} 
+                                    />
+                                </div>
+                            </div>
                         ))}
-                    </Swiper>
+                    </CustomCarousel>
                 </AnimatedSectionContent>
             </div>
         </section>
@@ -773,43 +857,31 @@ const Projects = ({ data }) => (
                     <h2 className="section-title">{data.title}</h2>
                     <p className="section-subtitle">{data.subtitle}</p>
                 </div>
-                <Swiper
-                     modules={[Navigation, Pagination]}
-                     spaceBetween={30}
-                     slidesPerView={1}
-                     navigation
-                     pagination={{ clickable: true }}
-                     breakpoints={{
-                         768: { slidesPerView: 2 },
-                         1200: { slidesPerView: 3 },
-                     }}
-                >
+                <CustomCarousel>
                     {data.items.map(project => (
-                        <SwiperSlide key={project.title}>
-                            <div className="project-card neo-card">
-                                <div className="project-header">
-                                    <div className="project-title">{project.title}</div>
-                                    <div className="project-tech">{project.tech}</div>
-                                </div>
-                                <div className="project-content">
-                                    <p className="project-description">{project.description}</p>
-                                    <ul className="project-highlights">
-                                        {project.highlights.map(item => <li key={item}>{item}</li>)}
-                                    </ul>
-                                    <div className="project-metrics">
-                                        {project.metrics.map(metric => (
-                                            <div key={metric.label} className="metric">
-                                                <i className={metric.icon}></i>
-                                                <span className="metric-number">{metric.value}</span>
-                                                <span className="metric-text">{metric.label}</span>
-                                            </div>
-                                        ))}
-                                    </div>
+                        <div key={project.title} className="project-card neo-card">
+                            <div className="project-header">
+                                <div className="project-title">{project.title}</div>
+                                <div className="project-tech">{project.tech}</div>
+                            </div>
+                            <div className="project-content">
+                                <p className="project-description">{project.description}</p>
+                                <ul className="project-highlights">
+                                    {project.highlights.map(item => <li key={item}>{item}</li>)}
+                                </ul>
+                                <div className="project-metrics">
+                                    {project.metrics.map(metric => (
+                                        <div key={metric.label} className="metric">
+                                            <i className={metric.icon}></i>
+                                            <span className="metric-number">{metric.value}</span>
+                                            <span className="metric-text">{metric.label}</span>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
-                        </SwiperSlide>
+                        </div>
                     ))}
-                </Swiper>
+                </CustomCarousel>
             </AnimatedSectionContent>
         </div>
     </section>
